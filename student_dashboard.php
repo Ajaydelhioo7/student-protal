@@ -24,11 +24,13 @@ if ($result->num_rows > 0) {
 }
 $stmt->close();
 
-// Fetch Pre Rank
+// Fetch Pre Rank for the same batch
 $stmt = $conn->prepare("SELECT percentage, FIND_IN_SET( percentage, (
-    SELECT GROUP_CONCAT( percentage ORDER BY percentage DESC ) FROM Test_Scores )
-) AS rank FROM Test_Scores WHERE rollno = ?");
-$stmt->bind_param("s", $student['rollno']);
+    SELECT GROUP_CONCAT( percentage ORDER BY percentage DESC ) 
+    FROM Test_Scores 
+    WHERE batch = ?
+) ) AS rank FROM Test_Scores WHERE rollno = ? AND batch = ?");
+$stmt->bind_param("sis", $student['batch'], $student['rollno'], $student['batch']);
 $stmt->execute();
 $result = $stmt->get_result();
 if ($row = $result->fetch_assoc()) {
@@ -36,11 +38,13 @@ if ($row = $result->fetch_assoc()) {
 }
 $stmt->close();
 
-// Fetch Mains Rank
+// Fetch Mains Rank for the same batch
 $stmt = $conn->prepare("SELECT percentage, FIND_IN_SET( percentage, (
-    SELECT GROUP_CONCAT( percentage ORDER BY percentage DESC ) FROM mains_test_score )
-) AS rank FROM mains_test_score WHERE rollno = ?");
-$stmt->bind_param("s", $student['rollno']);
+    SELECT GROUP_CONCAT( percentage ORDER BY percentage DESC ) 
+    FROM mains_test_score 
+    WHERE batch = ?
+) ) AS rank FROM mains_test_score WHERE rollno = ? AND batch = ?");
+$stmt->bind_param("sis", $student['batch'], $student['rollno'], $student['batch']);
 $stmt->execute();
 $result = $stmt->get_result();
 if ($row = $result->fetch_assoc()) {
